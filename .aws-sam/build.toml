@@ -5,9 +5,9 @@ codeuri = "C:\\Users\\kassi\\OneDrive\\Documentos\\My Personal\\aws\\lambda\\Sig
 runtime = "dotnet6"
 architecture = "x86_64"
 handler = "HelloWorld::HelloWorld.Function::FunctionHandler"
+source_hash = "959abf6445ec8fda962d1f8261f5683bdc7c06cc858b95121f1e3c8f4e9f70c4"
 manifest_hash = ""
 packagetype = "Zip"
-functions = ["HelloWorldFunction"]
-source_hash = "b00b0f707f561446b69be33eeea876680db0ba14dac5cfb61dfc190c37f3f485"
+functions = ["SignUpFunction"]
 
 [layer_build_definitions]
