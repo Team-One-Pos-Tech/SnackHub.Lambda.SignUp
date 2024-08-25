@@ -83,8 +83,8 @@ The SAM CLI reads the application template to determine the API's routes and the
         HelloWorld:
           Type: Api
           Properties:
-            Path: /hello
-            Method: get
+            Path: /signup
+            Method: post
 ```
 
 ## Add a resource to your application
