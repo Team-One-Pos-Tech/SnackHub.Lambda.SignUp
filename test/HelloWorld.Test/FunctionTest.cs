@@ -23,7 +23,7 @@ namespace HelloWorld.Tests
         request.Body = @"
         {
             ""Cpf"": ""53469738009"",
-            ""Name"": ""junior"",
+            ""Name"": ""Novo User Teste""
         }";
             
         // Act

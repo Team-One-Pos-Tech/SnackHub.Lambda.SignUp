@@ -3,9 +3,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Net.Http;
 using System.Text.Json;
-
+using Amazon.CognitoIdentityProvider;
+using Amazon.CognitoIdentityProvider.Model;
 using Amazon.Lambda.Core;
 using Amazon.Lambda.APIGatewayEvents;
+using HelloWorld.Models;
 
 // Assembly attribute to enable the Lambda function's JSON input to be converted into a .NET class.
 [assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.SystemTextJson.DefaultLambdaJsonSerializer))]
@@ -17,30 +19,36 @@ namespace HelloWorld
     {
 
         private static readonly HttpClient client = new HttpClient();
-
-        private static async Task<string> GetCallingIP()
-        {
-            client.DefaultRequestHeaders.Accept.Clear();
-            client.DefaultRequestHeaders.Add("User-Agent", "AWS Lambda .Net Client");
-
-            var msg = await client.GetStringAsync("http://checkip.amazonaws.com/").ConfigureAwait(continueOnCapturedContext:false);
-
-            return msg.Replace("\n","");
-        }
-
+        
         public async Task<APIGatewayProxyResponse> FunctionHandler(APIGatewayProxyRequest apigProxyEvent, ILambdaContext context)
         {
 
-            var location = await GetCallingIP();
-            var body = new Dictionary<string, string>
+            CreateUserRequest createUserRequest = JsonSerializer.Deserialize<CreateUserRequest>(apigProxyEvent.Body);
+            
+            var client = new AmazonCognitoIdentityProviderClient();
+            var response = await client.AdminCreateUserAsync(new AdminCreateUserRequest 
             {
-                { "message", "hello world" },
-                { "location", location }
-            };
+                MessageAction = "SUPPRESS",
+                TemporaryPassword = "Default-password-99!",
+                UserAttributes = new List<AttributeType> {
+                    new AttributeType {
+                        Name = "name",
+                        Value = createUserRequest.Name
+                    },
+                    new AttributeType {
+                        Name = "custom:CPF",
+                        Value = createUserRequest.Cpf
+                    }
+                },
+                UserPoolId = "us-east-1_DBk6tjf8T",
+                Username = createUserRequest.Cpf
+            });
+            
+            UserType user = response.User;
 
             return new APIGatewayProxyResponse
             {
-                Body = JsonSerializer.Serialize(body),
+                Body = JsonSerializer.Serialize(user),
                 StatusCode = 200,
                 Headers = new Dictionary<string, string> { { "Content-Type", "application/json" } }
             };
