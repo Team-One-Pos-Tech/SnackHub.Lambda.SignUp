@@ -23,9 +23,6 @@ namespace HelloWorld
         
         public async Task<APIGatewayProxyResponse> FunctionHandler(APIGatewayProxyRequest apigProxyEvent, ILambdaContext context)
         {
-            
-            Console.WriteLine(apigProxyEvent.Body);
-
             CreateUserRequest createUserRequest = JsonSerializer.Deserialize<CreateUserRequest>(apigProxyEvent.Body);
             
             var client = new AmazonCognitoIdentityProviderClient();
