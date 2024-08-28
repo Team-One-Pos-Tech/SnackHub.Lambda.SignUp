@@ -1,4 +1,4 @@
-namespace HelloWorld.Models;
+namespace SignUp.Models;
 
 public class CreateUserRequest
 {
