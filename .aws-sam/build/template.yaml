@@ -12,7 +12,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: SignUpFunction
-      Handler: HelloWorld::HelloWorld.Function::FunctionHandler
+      Handler: SignUp::SignUp.Function::FunctionHandler
       Runtime: dotnet6
       Architectures:
       - x86_64
@@ -31,11 +31,11 @@ Resources:
       SamResourceId: SignUpFunction
 Outputs:
   SignUpFunctionApi:
-    Description: API Gateway endpoint URL for Prod stage for Hello World function
+    Description: API Gateway endpoint URL for Prod stage for SignUp function
     Value:
       Fn::Sub: https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/
   SignUpFunction:
-    Description: Hello World Lambda Function ARN
+    Description: SignUp Lambda Function ARN
     Value:
       Fn::GetAtt:
       - SignUpFunction

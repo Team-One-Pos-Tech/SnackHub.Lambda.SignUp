@@ -27,7 +27,7 @@ namespace SignUp
             var response = await client.AdminCreateUserAsync(new AdminCreateUserRequest 
             {
                 MessageAction = "SUPPRESS",
-                TemporaryPassword = "Default-password-99!",
+                TemporaryPassword = createUserRequest.Password,
                 UserAttributes = new List<AttributeType> {
                     new AttributeType {
                         Name = "name",
@@ -40,6 +40,14 @@ namespace SignUp
                 },
                 UserPoolId = "us-east-1_DBk6tjf8T",
                 Username = createUserRequest.Cpf
+            });
+
+            await client.AdminSetUserPasswordAsync(new AdminSetUserPasswordRequest()
+            {
+                UserPoolId = "us-east-1_DBk6tjf8T",
+                Username = createUserRequest.Cpf,
+                Password = createUserRequest.Password,
+                Permanent = true
             });
             
             UserType user = response.User;
