@@ -1,41 +1,62 @@
-using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Net.Http;
+using System.Text.Json;
 using Xunit;
 using Amazon.Lambda.TestUtilities;
 using Amazon.Lambda.APIGatewayEvents;
+using FluentAssertions;
+using Moq;
+using SignUp.Contracts;
 
 namespace SignUp.Tests
 {
   public class FunctionTest
   {
-    private static readonly HttpClient client = new HttpClient();
+    private Mock<ISignUpRepository> _registerRepository;
 
+    private void BeforeTestStarting()
+    {
+        _registerRepository = new Mock<ISignUpRepository>();
+    }
+    
     [Fact]
-    public async Task TestCreateUserFunctionHandler()
+    public async Task RegisterUserIfDoesNotExists()
     {
         // Arrange
+        BeforeTestStarting();
+      
         var request = new APIGatewayProxyRequest();
         var context = new TestLambdaContext();
-        request.Body = @"
-        {
-            ""Cpf"": ""53469738009"",
-            ""Name"": ""Novo User Teste""
-        }";
+
+        var cpf = "53469738009";
+        var name = "Mario Sergio Cortela";
+        var password = "DefaultPassword!";
+        var email = "mario@kart.com";
+      
+        request.Body = $@"
+        {{
+            ""Name"": ""{name}"",
+            ""Username"": ""{cpf}"",
+            ""Email"": ""{email}"",
+            ""Password"": ""{password}""
+        }}";
+
+        _registerRepository.Setup(repository => repository.Register(new SignUpRequest(cpf, password, "email@email.com")))
+            .ReturnsAsync(
+                new SingUpResponse(null, true)
+            );
             
+        var function = new Function(_registerRepository.Object);
+      
         // Act
-        var function = new Function();
         var response = await function.FunctionHandler(request, context);
         
         // Assert
-        var expectedResponse = new APIGatewayProxyResponse
-        {
-            StatusCode = 200,
-            Headers = new Dictionary<string, string> { { "Content-Type", "application/json" } }
-        };
-            
-        Assert.Equal(expectedResponse.Headers, response.Headers);
-        Assert.Equal(expectedResponse.StatusCode, response.StatusCode);
+        response.StatusCode.Should().Be(200);
+      
+        var authResponse = JsonSerializer.Deserialize<SignUpFunctionResponse>(response.Body);
+        authResponse.Username.Should().Be(cpf);
+
     }
+    
   }
 }
