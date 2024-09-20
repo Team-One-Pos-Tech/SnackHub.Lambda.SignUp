@@ -3,14 +3,13 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Amazon.CognitoIdentityProvider;
 using Amazon.CognitoIdentityProvider.Model;
-using SignIn.Contracts;
-using SignUpRequest = SignIn.Contracts.SignUpRequest;
+using SignUp.Contracts;
 
-namespace SignIn.Repositories;
+namespace SignUp.Services;
 
-public class CognitoSignUpRepository : ISignUpRepository
+public class CognitoSignUpService : ISignUpRepository
 {
-    public async Task<SingUpResponse> Register(SignUpRequest request)
+    public async Task<RegisterResponse> Register(RegisterRequest request)
     {
         var client = new AmazonCognitoIdentityProviderClient();
         
@@ -21,6 +20,10 @@ public class CognitoSignUpRepository : ISignUpRepository
             MessageAction = "SUPPRESS",
             TemporaryPassword = request.Password,
             UserAttributes = new List<AttributeType> {
+                new AttributeType {
+                    Name = "name",
+                    Value = request.Name
+                },
                 new AttributeType {
                     Name = "email",
                     Value = request.Email
@@ -44,6 +47,6 @@ public class CognitoSignUpRepository : ISignUpRepository
             
         var user = response.User;
 
-        return new SingUpResponse(user.Username, true);
+        return new RegisterResponse(user.Username, user.UserCreateDate.ToString());
     }
 }

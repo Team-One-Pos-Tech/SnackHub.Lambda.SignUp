@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using System.Text.Json;
 using Xunit;
@@ -11,15 +12,15 @@ namespace SignUp.Tests
 {
   public class FunctionTest
   {
-    private Mock<ISignUpRepository> _registerRepository;
+    private Mock<ISignUpRepository> _registerService;
 
     private void BeforeTestStarting()
     {
-        _registerRepository = new Mock<ISignUpRepository>();
+        _registerService = new Mock<ISignUpRepository>();
     }
     
     [Fact]
-    public async Task RegisterUserIfDoesNotExists()
+    public async Task RegisterUser()
     {
         // Arrange
         BeforeTestStarting();
@@ -40,12 +41,13 @@ namespace SignUp.Tests
             ""Password"": ""{password}""
         }}";
 
-        _registerRepository.Setup(repository => repository.Register(new SignUpRequest(cpf, password, "email@email.com")))
+        _registerService.Setup(service => service.Register(
+                new RegisterRequest(cpf, password, email, name)))
             .ReturnsAsync(
-                new SingUpResponse(null, true)
+                new RegisterResponse(cpf, DateTime.Now.ToString())
             );
             
-        var function = new Function(_registerRepository.Object);
+        var function = new Function(_registerService.Object);
       
         // Act
         var response = await function.FunctionHandler(request, context);
