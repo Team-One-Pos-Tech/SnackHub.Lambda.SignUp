@@ -1,5 +1,5 @@
 # How does authentication work?
-[Authentication Documentation]([https://github.com/Team-One-Pos-Tech/SnackHub.Lambda.SignUp](https://github.com/Team-One-Pos-Tech/SnackHub/wiki/Authentication))
+[Authentication Documentation](https://github.com/Team-One-Pos-Tech/SnackHub/wiki/Authentication)
 
 # SignUpFunction
 
