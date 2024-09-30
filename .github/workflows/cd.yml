@@ -5,7 +5,7 @@ on:
     branches: [ "main" ]
     
 env:
-  ECR_REPOSITORY: sign-up-auth
+  ECR_REPOSITORY: sign-up-registry
 
 jobs:
   
